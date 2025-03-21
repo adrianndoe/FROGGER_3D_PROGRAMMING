@@ -1622,7 +1622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d823937596a8ce418a26117a2f6acc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefabs:
+  prefabs:
   - {fileID: 790464406874220115, guid: bd6e1821f36d0d74c9f810d84a305666, type: 3}
   - {fileID: 8702458256300441346, guid: 9beb534557a992446a4501697e068b96, type: 3}
   - {fileID: 2786855943299384136, guid: 20f5943e4e80001479566e22c404f2ae, type: 3}
@@ -2404,7 +2404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d823937596a8ce418a26117a2f6acc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefabs:
+  prefabs:
   - {fileID: 790464406874220115, guid: bd6e1821f36d0d74c9f810d84a305666, type: 3}
   - {fileID: 8702458256300441346, guid: 9beb534557a992446a4501697e068b96, type: 3}
   - {fileID: 2786855943299384136, guid: 20f5943e4e80001479566e22c404f2ae, type: 3}
