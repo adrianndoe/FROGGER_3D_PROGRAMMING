@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 553649920622457193}
   - component: {fileID: 3301512876244140077}
+  - component: {fileID: -2184551128289971614}
   m_Layer: 0
   m_Name: TURTLE_TRIPLE
   m_TagString: Untagged
@@ -56,6 +57,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 20.652958, y: 2.3157039, z: 6.973614}
   m_Center: {x: -0.04279518, y: 0.05080849, z: 0.3143723}
+--- !u!114 &-2184551128289971614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875368209485018677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c9f1a3f52ecd74bacb30c81e2067b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  direction: {x: 1, y: 0, z: 0}
+  destroyDistance: 400
 --- !u!1001 &266454532360128461
 PrefabInstance:
   m_ObjectHideFlags: 0

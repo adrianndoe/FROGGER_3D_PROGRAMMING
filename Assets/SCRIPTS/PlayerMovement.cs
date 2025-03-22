@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();        
+        _rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -31,3 +31,4 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 }
+

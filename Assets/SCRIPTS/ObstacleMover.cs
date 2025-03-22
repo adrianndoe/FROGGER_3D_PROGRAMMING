@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ObstacleMover : MonoBehaviour
 {
-    public float speed; // how fast the car moves
+    [HideInInspector]
+    public float speed;
     public Vector3 direction = Vector3.right; // which way it moves, default right
     public float destroyDistance = 400f; // how far it can go before destroying
 

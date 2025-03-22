@@ -15,21 +15,32 @@ public class ObsticalSpawner : MonoBehaviour
     public float maxDelay = 3f; // how long we wait at most
 
     [Header("Car Settings")]
-    public float moveSpeed = 3f; // how fast the cars move
+    private float moveSpeed = 3f; // how fast the cars move
     public float destroyDistance = 400f; // how far they go before getting destroyed
 
     private GameObject lastCar; // track the last car we spawned so we don't spawn inside it
 
     private Transform chosenSpawnPoint; // which spawner this one is using
     private Vector3 moveDirection; // left or right depending on which spawner we use
-
+    
     void Start()
     {
         // randomly pick one of the spawners to use for this run
         bool useA = Random.value > 0.5f;
-        chosenSpawnPoint = useA ? spawnPointA : spawnPointB;
-        moveDirection = useA ? Vector3.right : Vector3.left;
+        // Check if we should use Spawn Point 1 or 2
+        if (useA)
+        {
+            chosenSpawnPoint = spawnPointA;      // Use Spawn Point 1
+            moveDirection = Vector3.right;       // Cars move to the right
+        }
+        else
+        {
+            chosenSpawnPoint = spawnPointB;      // Use Spawn Point 2
+            moveDirection = Vector3.left;        // Cars move to the left
+        }
 
+        // assign a unique speed for this spawner between 20 and 40
+        moveSpeed = Random.Range(20f, 40f);
         StartCoroutine(SpawnWhenClear()); // start spawning loop
     }
 
@@ -91,10 +102,33 @@ public class ObsticalSpawner : MonoBehaviour
             movingObject.transform.rotation = Quaternion.Euler(0, -90f, 0);
         }
 
-        // give it movement
+        if (movingObject.name.Contains("TURTLE"))
+        {
+            movingObject.transform.Rotate(0, 90f, 0);
+        }
+        // adjusts the log prefab to face the right direction when spawning
+        if (movingObject.name.Contains("LOG"))
+        {
+            movingObject.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+        }
+
+        // Adjuts the aligator prefab to face the right direction
+        if (movingObject.name.Contains("ALIGATOR"))
+        {
+            if (direction == Vector3.right)
+            {
+                movingObject.transform.rotation = Quaternion.Euler(0f, 180f, 180f);
+            }
+            else if (direction == Vector3.left)
+            {
+                movingObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
+        }
+
+        // Add the movement script and set its values
         ObstacleMover mover = movingObject.AddComponent<ObstacleMover>();
-        mover.speed = moveSpeed;
-        mover.direction = direction;
+        mover.speed = moveSpeed;              // grab speed from spawner
+        mover.direction = direction;          // pass direction based on spawn
         mover.destroyDistance = destroyDistance;
 
         return movingObject;
