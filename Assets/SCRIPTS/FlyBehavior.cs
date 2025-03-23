@@ -22,7 +22,7 @@ public class FlyBehavior : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         // Check if object is the frog by name so that means the cube object and not the empty object containing the collider
-        if (other.gameObject.name.Contains("Player1") || other.gameObject.name.Contains("Player2"))
+        if (other.GetComponent<IsFrog>() != null)
         {
             collected = true;
 
