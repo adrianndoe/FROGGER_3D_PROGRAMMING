@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3208724075605848539}
+  - component: {fileID: 8653463519564211699}
   - component: {fileID: 5671679244032321391}
   - component: {fileID: 7924829569151776460}
   - component: {fileID: 1065599631016829022}
@@ -30,11 +31,23 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.47, y: 0.94, z: -89.78}
-  m_LocalScale: {x: 7, y: 1, z: 7}
+  m_LocalScale: {x: 7, y: 0.1, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8653463519564211699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2825907958755914722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8804dd07341b5a44b99da5b6715ae773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!33 &5671679244032321391
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -102,7 +115,7 @@ BoxCollider:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 0
+  m_LayerOverridePriority: 1
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
