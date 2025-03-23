@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 public class ObsticalSpawner : MonoBehaviour
 {
@@ -102,28 +103,27 @@ public class ObsticalSpawner : MonoBehaviour
             movingObject.transform.rotation = Quaternion.Euler(0, -90f, 0);
         }
 
-        if (movingObject.name.Contains("TURTLE"))
+        // adjusts the turtle prefab to face the right direction when spawning
+        if (movingObject.GetComponent<IsTurtle>() != null)
         {
             movingObject.transform.Rotate(0, 90f, 0);
         }
+
         // adjusts the log prefab to face the right direction when spawning
-        if (movingObject.name.Contains("LOG"))
+        if (movingObject.GetComponent<IsLog>() != null)
         {
             movingObject.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
         }
 
         // Adjuts the aligator prefab to face the right direction
-        if (movingObject.name.Contains("ALIGATOR"))
+        if (movingObject.GetComponent<IsAligator>() != null)
         {
             if (direction == Vector3.right)
-            {
                 movingObject.transform.rotation = Quaternion.Euler(0f, 180f, 180f);
-            }
             else if (direction == Vector3.left)
-            {
                 movingObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-            }
         }
+
 
         // Add the movement script and set its values
         ObstacleMover mover = movingObject.AddComponent<ObstacleMover>();

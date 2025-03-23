@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private const float JUMP_HEIGHT   = 3f;
     private const float JUMP_DURATION = 1f; // Time to reach the peak
     private const float JUMP_OFFSET = 15.2f; //15.2f;
+    private Vector3 lastSafePosition; //ADDED THIS
 
     private bool activeCollision;
     private Vector3 platformVector;
@@ -33,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         jumpVelocity = (2 * JUMP_HEIGHT) / JUMP_DURATION; // Physics equation: v = (2h) / t
         activeCollision = false;
+
+        lastSafePosition = transform.position; // THIS WAS ADDED
     }
 
     // Update is called once per frame
@@ -54,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     Debug.Log("On something safe!");
                 isJumping = false;
+                lastSafePosition = transform.position;
                 if (Input.anyKeyDown && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)))
                 {
                     isJumping = true;
@@ -71,18 +75,20 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log("Landed safe");
                 Death("not dead");
             }
-//            else if (hit.collider.GetComponent<IsWater>() != null)
-//            { 
-////                Debug.Log("Landed on isWater prefab");
-//                isJumping = false;
-//                Death("drowning");
-//            }
-//            else if (hit.collider.GetComponent<IsAligatorOpenMouth>() != null)
-//            {
-//                //                Debug.Log("Landed on isWater prefab");
-//                isJumping = false;
-//                Death("aligator");
-//            }
+
+            
+            //            else if (hit.collider.GetComponent<IsWater>() != null)
+            //            { 
+            ////                Debug.Log("Landed on isWater prefab");
+            //                isJumping = false;
+            //                Death("drowning");
+            //            }
+            //            else if (hit.collider.GetComponent<IsAligatorOpenMouth>() != null)
+            //            {
+            //                //                Debug.Log("Landed on isWater prefab");
+            //                isJumping = false;
+            //                Death("aligator");
+            //            }
             //else if (hit.collider.GetComponent<IsOccupiedLilyPad>() != null)
             //{
             //    //                Debug.Log("Landed on isWater prefab");
@@ -166,6 +172,15 @@ public class PlayerMovement : MonoBehaviour
                 isJumping = false;
                 Debug.Log("Congrats, you hit a lily pad");
                 ResetPosition();
+            }
+            else if (other.GetComponent<IsPylon>() != null) // THIS WAS ADDED
+            {
+                Debug.Log("Blocked by pylon!");
+                isJumping = false;
+
+                // Bounce frog back to last safe position
+                transform.position = lastSafePosition; // THIS WAS ADDED
+                Debug.Log("Bounced back to: " + lastSafePosition); // THIS WAS ADDED
             }
 
         }

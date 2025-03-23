@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3701716792581733854}
   - component: {fileID: -2131516579113026076}
   - component: {fileID: 4623685960762945935}
+  - component: {fileID: -2052609622934824093}
   m_Layer: 0
   m_Name: ALIGATOR
   m_TagString: Untagged
@@ -109,8 +110,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.2364055, y: 1, z: 1}
+  m_Center: {x: 0.11820199, y: 0, z: 0}
 --- !u!114 &-2131516579113026076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +137,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8804dd07341b5a44b99da5b6715ae773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-2052609622934824093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100791335383663657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 052d729af5bcdfb4998fda721dd7b245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8071540987337895677
