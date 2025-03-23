@@ -3,6 +3,7 @@ using static UnityEngine.LightAnchor;
 using UnityEngine.SocialPlatforms;
 using System;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,27 +22,37 @@ public class PlayerMovement : MonoBehaviour
     private const float JUMP_DURATION = 1f; // Time to reach the peak
     private const float JUMP_OFFSET = 15.2f; //15.2f;
 
+    private bool activeCollision;
+    private Vector3 platformVector;
+
+    private bool ignoreCollisions = false; // used to disable collisions when attaching frog to a moving platform
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         jumpVelocity = (2 * JUMP_HEIGHT) / JUMP_DURATION; // Physics equation: v = (2h) / t
-
+        activeCollision = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //if (transform.parent.GetComponent<IsSafeWater>() != null)
+        //{
+        //  //  Debug.Log("Sitting on something");
+        //    transform.position = transform.parent.transform.position;
+        //}
         // check if frog is on something
         if (Physics.Raycast(transform.position + Vector3.up * 0.1f - new Vector3(0, transform.localScale.y / 2, 0), // Start slightly above the base
                         Vector3.down,
                         out RaycastHit hit,
                         0.2f
-                        ))
+                        ) || (transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()))
         {
-            if (hit.collider.GetComponent<IsLand>() != null) // Check if it has the script
-            {
-//                Debug.Log("Landed on isLand prefab with IsLandScript!");
+            if ((transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()) || hit.collider.GetComponent<IsLand>()) // Check if it has the script
+                {
+                    Debug.Log("On something safe!");
                 isJumping = false;
                 if (Input.anyKeyDown && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)))
                 {
@@ -54,35 +65,57 @@ public class PlayerMovement : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.RightArrow)) { jumpVector = new Vector3(1, 1, 0); }
                 }
             }
-            else if (hit.collider.GetComponent<IsSafeWater>() != null)
+            else if (hit.collider.GetComponent<IsLilyPad>() != null)
             {
                 isJumping = false;
                 Debug.Log("Landed safe");
                 Death("not dead");
             }
-            else if (hit.collider.GetComponent<IsWater>() != null)
-            { 
-//                Debug.Log("Landed on isWater prefab");
-                isJumping = false;
-                Death("drowning");
-            }
-            else if (hit.collider.GetComponent<IsAligatorOpenMouth>() != null)
-            {
-                //                Debug.Log("Landed on isWater prefab");
-                isJumping = false;
-                Death("aligator");
-            }
-
+//            else if (hit.collider.GetComponent<IsWater>() != null)
+//            { 
+////                Debug.Log("Landed on isWater prefab");
+//                isJumping = false;
+//                Death("drowning");
+//            }
+//            else if (hit.collider.GetComponent<IsAligatorOpenMouth>() != null)
+//            {
+//                //                Debug.Log("Landed on isWater prefab");
+//                isJumping = false;
+//                Death("aligator");
+//            }
+            //else if (hit.collider.GetComponent<IsOccupiedLilyPad>() != null)
+            //{
+            //    //                Debug.Log("Landed on isWater prefab");
+            //    isJumping = false;
+            //    Death("water - that lily pad is occupied");
+            //}
+            //else if (hit.collider.GetComponent<IsLilyPad>() != null)
+            //{
+            //    //                Debug.Log("Landed on isWater prefab");
+            //    isJumping = false;
+            //    Debug.Log("Congrats, you hit a lily pad");
+            //    ResetPosition();
+            //}
         }
         if (isJumping)
         {
+            transform.parent.parent = null;   // if frogger is attached to an island (turtle, log, aligator), detatch as it jumps
             jumpTimer += Time.deltaTime * 3; // speed up jumping time by a factor of 3
             float yOffset = jumpVelocity * jumpTimer - (0.5f * Physics.gravity.magnitude * jumpTimer * jumpTimer); // calculate y value per update above starting y position
             float forwardOffset = JUMP_OFFSET * jumpTimer; // calculate how far forward the frog will be
 
             Vector3 newPosition = startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset); // map the new position
-            transform.position = newPosition; // startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset);
+
+            if (newPosition.z < -97.3) newPosition.z = -97.3f; // don't allow jumping off the bottom edge of the screen
+            if (newPosition.x >  92.5) newPosition.x =  92.5f; // don't allow jumping off the right  edge of the screen
+            if (newPosition.x < -92.5) newPosition.x = -92.5f; // don't allow jumping off the left   edge of the screen
+
+            if (activeCollision == false)
+                transform.position = newPosition; // startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset);
+            activeCollision = false;
         }
+        if (transform.position.x < -95) Death("driven out of bounds - left");
+        else if (transform.position.x > 95) Death("driven out of bounds - right");
 
 
         // this way moves the frog way too slow
@@ -102,16 +135,66 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<IsVehicle>() == true)
-            Death("vehicle - trigger");
-        if (other.gameObject.GetComponent<IsSafeWater>() != null)
-            transform.parent = other.transform;  // stand on the moving log - when you jump off, set parent to null
+        if (!ignoreCollisions)
+        {
+            if (other.gameObject.GetComponent<IsVehicle>() == true)
+                Death("vehicle - trigger");
+            else if (other.gameObject.GetComponent<IsSafeWater>() != null)
+            {
+                Debug.Log("Collision with turtles");
+                // activeCollision = true;
+                //        LandSafeInWater(other);
+                float newYCoord = other.transform.position.y + this.transform.localScale.y / 2 + 0.1f; // find the top of the landing pad with the collider in it for the floating object
+          //      Debug.Log(newYCoord);
+                Vector3 newPosition = new Vector3(transform.position.x, newYCoord, other.transform.position.z);
+
+                ignoreCollisions = true;    // disable collisions for the setparent because it moves the frog into the water
+                transform.parent.SetParent(other.transform, true); // set the parent without moving the object
+                transform.position = newPosition;                  // update position to on top of floating object
+                ignoreCollisions = false;   // after position update, re-enable collisions
+
+                isJumping = false;
+            }
+            //            transform.parent.parent = other.transform;  // stand on the moving log - when you jump off, set parent to null
+            else if (other.gameObject.GetComponent<IsWater>() == true && activeCollision == false)
+                Death("water");
+            else if (other.GetComponent<IsAligatorOpenMouth>() != null)
+                Death("aligator");
+            else if (other.GetComponent<IsLilyPad>() != null)
+            {
+                //                Debug.Log("Landed on isWater prefab");
+                isJumping = false;
+                Debug.Log("Congrats, you hit a lily pad");
+                ResetPosition();
+            }
+
+        }
+
+    }
+
+    void LandSafeInWater(Collider _other)
+    {
+        if (_other != null)
+        {
+            Debug.Log("Landed on: " + _other.name);
+            float newYCoord = _other.transform.position.y + this.transform.localScale.y / 2 + 0.1f; // find the top of the landing pad with the collider in it for the floating object
+            Debug.Log(newYCoord);
+            this.transform.position = new Vector3(this.transform.position.x, newYCoord, this.transform.position.z); // update position to on top of floating object
+            isJumping = false;
+            transform.parent.parent = _other.transform;  // stand on the moving log - when you jump off, set parent to null
+        }
     }
 
     void Death(string _cause)
     {
+        isJumping = false;
         Debug.Log("Death by " + _cause);
         Time.timeScale = 0f; // This will stop time
+    }
+
+    void ResetPosition()
+    {
+        transform.position = new Vector3(0, 1, -97.3f);
     }
 }
 
