@@ -104,6 +104,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.GetComponent<IsVehicle>() == true)
             Death("vehicle - trigger");
+        if (other.gameObject.GetComponent<IsSafeWater>() != null)
+            transform.parent = other.transform;  // stand on the moving log - when you jump off, set parent to null
     }
 
     void Death(string _cause)
