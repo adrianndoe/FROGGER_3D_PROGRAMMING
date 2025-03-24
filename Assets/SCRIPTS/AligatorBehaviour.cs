@@ -8,8 +8,7 @@ public class AligatorBehaviour : MonoBehaviour
     [SerializeField]
     private Renderer objRender;
     IsAligatorOpenMouth mouth;
-  
-    private int timer = 3;
+ 
     private void Start()
     {
         if(objRender == null)
