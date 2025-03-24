@@ -27,6 +27,8 @@ public class FlyBehavior : MonoBehaviour
             collected = true;
 
             //  **Add points here for when frog hits fly** + 200 (For the final we would add some audio queue and maybe animation here)
+            PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
+            playerScore.AddScore(200);
             Debug.Log("Frog collected the fly!");
 
             Destroy(gameObject); // Instantly remove the fly when collected

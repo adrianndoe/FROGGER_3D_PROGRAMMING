@@ -166,13 +166,45 @@ public class PlayerMovement : MonoBehaviour
                 Death("water");
             else if (other.GetComponent<IsAligatorOpenMouth>() != null)
                 Death("aligator");
-            else if (other.GetComponent<IsLilyPad>() != null)
+
+
+            if (other.GetComponent<IsLilyPad>() != null)
             {
                 //                Debug.Log("Landed on isWater prefab");
                 isJumping = false;
                 Debug.Log("Congrats, you hit a lily pad");
-                ResetPosition();
+
+                
+
+                //below is implementation of time score upon reachin lilly pad
+                PlayerScore playerScore = FindAnyObjectByType<PlayerScore>(); //get access to player score
+                Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
+                int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
+                playerScore.AddScore(timeScore);
+
+                //below is implementation of reaching normal  lillypad
+                playerScore.AddScore(100);
+
+                
+                
+
+                Time.timeScale = 0f;
+                
+
+                // ResetPosition();
             }
+
+            if (other.GetComponent<FlyBehavior>() != null)
+            {
+                //Should implement, I think the fly object is not reachable since the player cant go on top of the lillypad and stops right before
+                PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
+                playerScore.AddScore(200);
+                Debug.Log("Got Fly");
+                Destroy(other.gameObject);
+                
+            }
+
+
             else if (other.GetComponent<IsPylon>() != null) // THIS WAS ADDED
             {
                 Debug.Log("Blocked by pylon!");
@@ -199,12 +231,33 @@ public class PlayerMovement : MonoBehaviour
             transform.parent.parent = _other.transform;  // stand on the moving log - when you jump off, set parent to null
         }
     }
+    
 
     void Death(string _cause)
     {
         isJumping = false;
-        Debug.Log("Death by " + _cause);
-        Time.timeScale = 0f; // This will stop time
+        Debug.Log("Life Lost By " + _cause);
+        
+
+        //Below is Tristan Modifications for lives || Sidenote, removed carey's time stop above.
+        PlayerLives lives = FindAnyObjectByType<PlayerLives>();
+        if(lives != null)
+        {
+            lives.currentLives--;
+            Debug.Log("Lives Left" + lives.currentLives);
+
+            if(lives.currentLives > 0)
+            {
+                ResetPosition();
+            }
+            else
+            {
+                Debug.Log("No lives left. ending game");
+                Time.timeScale = 0f; //stopping game time
+            }
+
+        }
+
     }
 
     void ResetPosition()
