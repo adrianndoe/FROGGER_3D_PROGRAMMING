@@ -120,7 +120,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 25, z: 0.1}
+  m_Size: {x: 1, y: 1, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-1690221856727761906
 MonoBehaviour:
@@ -137,3 +137,4 @@ MonoBehaviour:
   speed: 0
   direction: {x: 1, y: 0, z: 0}
   destroyDistance: 400
+  test: {x: 0, y: 0, z: 0}
