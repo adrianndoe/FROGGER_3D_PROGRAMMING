@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7924829569151776460}
   - component: {fileID: 1065599631016829022}
   - component: {fileID: -1690221856727761906}
+  - component: {fileID: 951951566432632475}
   m_Layer: 0
   m_Name: TURTLE_SINGLE
   m_TagString: Untagged
@@ -138,3 +139,15 @@ MonoBehaviour:
   direction: {x: 1, y: 0, z: 0}
   destroyDistance: 400
   test: {x: 0, y: 0, z: 0}
+--- !u!114 &951951566432632475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2825907958755914722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904a7af97c1eccc49934fb1bc0d2e52f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

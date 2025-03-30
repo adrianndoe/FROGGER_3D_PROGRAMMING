@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7018666774811104029}
   - component: {fileID: -7252279164910984282}
   - component: {fileID: -5863724283130181840}
+  - component: {fileID: 5209839944802643794}
   m_Layer: 0
   m_Name: TURTLE_TRIPLE
   m_TagString: Untagged
@@ -126,8 +127,24 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 1
+--- !u!114 &5209839944802643794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875368209485018677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904a7af97c1eccc49934fb1bc0d2e52f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  submergeDepth: 1
+  submergeDownTime: 1
+  stayUnderwaterTime: 0.5
+  submergeUpTime: 1
 --- !u!1 &2446501919358439732
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,6 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1065599631016829022, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+    - {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -410,6 +428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1065599631016829022, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+    - {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -485,6 +504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1065599631016829022, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+    - {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

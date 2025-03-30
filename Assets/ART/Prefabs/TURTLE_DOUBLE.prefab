@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 3777349635085865537}
   - component: {fileID: 7088156509539106359}
   - component: {fileID: -25217896487788367}
+  - component: {fileID: 80295143952637837}
+  - component: {fileID: 5087382053156203681}
   m_Layer: 0
   m_Name: TURTLE_DOUBLE
   m_TagString: Untagged
@@ -63,7 +65,7 @@ BoxCollider:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 1
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -98,6 +100,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ca87261d2c81ba42880b0453b0a399e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &80295143952637837
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7591219131485814099}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 1
+--- !u!114 &5087382053156203681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7591219131485814099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904a7af97c1eccc49934fb1bc0d2e52f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  submergeDepth: 1
+  submergeDownTime: 1
+  stayUnderwaterTime: 0.5
+  submergeUpTime: 1
 --- !u!1001 &378082401932888054
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -106,6 +151,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2493205754526055916}
     m_Modifications:
+    - target: {fileID: -1690221856727761906, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2825907958755914722, guid: 5938867609d205f49abf57445bea7e31, type: 3}
       propertyPath: m_Name
       value: TURTLE_SINGLE (1)
@@ -160,6 +213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1065599631016829022, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+    - {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -177,6 +231,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2493205754526055916}
     m_Modifications:
+    - target: {fileID: -1690221856727761906, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2825907958755914722, guid: 5938867609d205f49abf57445bea7e31, type: 3}
       propertyPath: m_Name
       value: TURTLE_SINGLE (2)
@@ -235,6 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1065599631016829022, guid: 5938867609d205f49abf57445bea7e31, type: 3}
+    - {fileID: 951951566432632475, guid: 5938867609d205f49abf57445bea7e31, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

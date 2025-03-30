@@ -15,8 +15,8 @@ public class ObsticalSpawner : MonoBehaviour
     public float minDelay = 0.5f; // how little time we wait before spawning another object
     public float maxDelay = 3f; // how long we wait at most
 
-    [Header("Car Settings")]
-    private float moveSpeed = 3f; // how fast the cars move
+    [Header("object Settings")]
+    private float moveSpeed = 3f; // how fast the objects move
     public float destroyDistance = 400f; // how far they go before getting destroyed
 
     private GameObject lastCar; // track the last car we spawned so we don't spawn inside it
@@ -106,8 +106,13 @@ public class ObsticalSpawner : MonoBehaviour
         // adjusts the turtle prefab to face the right direction when spawning
         if (movingObject.GetComponent<IsTurtle>() != null)
         {
-            movingObject.transform.Rotate(0, 90f, 0);
+            Debug.Log($"[TURTLE BEFORE ROTATE] Rotation: {movingObject.transform.rotation.eulerAngles}");
+            movingObject.transform.Rotate(0, 90f, 0);  // Your preferred method
+            //movingObject.transform.rotation = Quaternion.Euler(0, 90, 0); // Force consistent Y rotation
+
+            Debug.Log($"[TURTLE AFTER ROTATE] Rotation: {movingObject.transform.rotation.eulerAngles}");
         }
+
 
         // adjusts the log prefab to face the right direction when spawning
         if (movingObject.GetComponent<IsLog>() != null)
@@ -130,6 +135,13 @@ public class ObsticalSpawner : MonoBehaviour
         mover.speed = moveSpeed;              // grab speed from spawner
         mover.direction = direction;          // pass direction based on spawn
         mover.destroyDistance = destroyDistance;
+
+       /* TurtleSubmerge turtle = movingObject.GetComponent<TurtleSubmerge>();
+        if (turtle != null)
+        {
+            turtle.Initialize(moveSpeed, direction);
+        }
+*/
 
         return movingObject;
     }
