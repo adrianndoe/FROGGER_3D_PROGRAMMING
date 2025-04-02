@@ -35,6 +35,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // determine the speed of the object the player is standing on, if on an object
+        Vector3 parentMovement = new Vector3(0, 0, 0);
+        if (transform.parent.parent != null)
+            parentMovement = transform.parent.parent.GetComponent<ObstacleMover>().speed * transform.parent.parent.GetComponent<ObstacleMover>().direction * Time.deltaTime;
+
         if (Physics.Raycast(transform.position + Vector3.up * 0.1f - new Vector3(0, transform.localScale.y / 2, 0), // Start slightly above the base
                         Vector3.down,
                         out RaycastHit hit,
@@ -66,14 +71,6 @@ public class PlayerMovement : MonoBehaviour
         }
         if (isJumping)
         {
-            Vector3 parentMovement = new Vector3(0, 0);
-            // THIS SHOULD GIVE ME WHAT I AM AFTER TO GET PLATFORM CHANGE IN POSITION
-            if (transform.parent.parent != null)
-            {
-                Debug.Log("Velocity: " + transform.parent.parent.GetComponent<ObstacleMover>().test);
-                parentMovement = transform.parent.parent.GetComponent<ObstacleMover>().test;
-            }
-
             if (transform.parent.parent != null) transform.parent.parent = null;   // if frogger is attached to an island (turtle, log, aligator), detatch as it jumps
             jumpTimer += Time.deltaTime * 3; // speed up jumping time by a factor of 3
             float yOffset = jumpVelocity * jumpTimer - (0.5f * Physics.gravity.magnitude * jumpTimer * jumpTimer); // calculate y value per update above starting y position

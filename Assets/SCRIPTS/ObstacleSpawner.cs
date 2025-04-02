@@ -15,14 +15,14 @@ public class ObsticalSpawner : MonoBehaviour
     public float minDelay = 0.5f; // how little time we wait before spawning another object
     public float maxDelay = 3f; // how long we wait at most
 
-    [Header("object Settings")]
-    private float moveSpeed = 3f; // how fast the objects move
+    [Header("Object Settings")]
+    public float moveSpeed = 3f; // how fast the objects move
     public float destroyDistance = 400f; // how far they go before getting destroyed
 
     private GameObject lastCar; // track the last car we spawned so we don't spawn inside it
 
     private Transform chosenSpawnPoint; // which spawner this one is using
-    private Vector3 moveDirection; // left or right depending on which spawner we use
+    public Vector3 moveDirection; // left or right depending on which spawner we use
     
     void Start()
     {
