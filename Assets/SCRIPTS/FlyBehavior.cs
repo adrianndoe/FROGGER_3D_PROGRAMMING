@@ -18,20 +18,16 @@ public class FlyBehavior : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    // simply destroys the fly if the frog collides with it
+
     void OnTriggerEnter(Collider other)
     {
-        // Check if object is the frog by name so that means the cube object and not the empty object containing the collider
-        if (other.GetComponent<IsFrog>() != null)
+
+        if (other.GetComponent<PlayerMovement>() != null)
         {
-            collected = true;
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+            player.collectedFly = true;
 
-            //  **Add points here for when frog hits fly** + 200 (For the final we would add some audio queue and maybe animation here)
-            PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
-            playerScore.AddScore(200);
-            Debug.Log("Frog collected the fly!");
-
-            Destroy(gameObject); // Instantly remove the fly when collected
+            Destroy(gameObject);
         }
     }
 }

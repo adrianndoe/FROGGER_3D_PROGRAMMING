@@ -24,6 +24,12 @@ public class PlayerMovement : MonoBehaviour
 
     private bool ignoreCollisions = false; // used to disable collisions when attaching frog to a moving platform
 
+    //Added for collecting fly and special frog
+    [HideInInspector] public bool collectedSpecialFrog = false; // THIS WAS ADDED (Used to recognize if frog gets lady frog) **Points**
+    [HideInInspector] public bool collectedFly = false; // THIS WAS ADDED (Used to recognize if frog got a fly before touching lillypad) **Points**
+    private bool reachedLilyPad = false; // Prevent multiple triggers (not fully implemented yet)
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -68,7 +74,46 @@ public class PlayerMovement : MonoBehaviour
             {
                 isJumping = false;
                 Debug.Log("Landed safe");
-                Death("not dead");
+
+                PlayerScore playerScore = FindAnyObjectByType<PlayerScore>(); //get access to player score
+                Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
+                int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
+                playerScore.AddScore(timeScore);
+
+
+                // BONUS FOR SPECIAL FROG
+                if (collectedSpecialFrog)
+                {
+                    playerScore.AddScore(200);
+                    collectedSpecialFrog = false;
+                }
+                // BONUS FOR FLY
+                if (collectedFly)
+                {
+                    playerScore.AddScore(200);
+                    collectedFly = false;
+                }
+
+                //below is implementation of reaching normal  lillypad
+
+                playerScore.AddScore(100);
+
+
+                // Reset the lily pad flag after short delay so we can score again next time
+                //Invoke(nameof(AllowLilyPadTrigger), 0.2f);
+
+                if (transform.parent != null)
+                    transform.parent.SetParent(null);
+
+                ResetPosition();
+
+
+
+
+                // BRUNO: I'm sure you have a reason but i couldn't figure it out this
+                // it removes a life im assuming you haven't implemented whats suppose to happen when it hits a lillypad
+                // as thats the only instance of Death("not dead") i would assume would be called
+                //Death("not dead");
             }
         }
         if (isJumping)
@@ -98,6 +143,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!ignoreCollisions)
         {
+            Debug.Log("Triggered with: " + other.name);
             if (other.gameObject.GetComponent<IsVehicle>() == true)
                 Death("vehicle - trigger");
             else if (other.gameObject.GetComponent<IsSafeWater>() != null)
@@ -122,37 +168,51 @@ public class PlayerMovement : MonoBehaviour
             if (other.GetComponent<IsLilyPad>() != null)
             {
                 isJumping = false;
-
+                Debug.Log("Frog landed on lily pad");
                 //below is implementation of time score upon reachin lilly pad
                 PlayerScore playerScore = FindAnyObjectByType<PlayerScore>(); //get access to player score
                 Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
                 int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
                 playerScore.AddScore(timeScore);
 
+
+                // BONUS FOR SPECIAL FROG
+                if (collectedSpecialFrog)
+                {
+                    playerScore.AddScore(200);
+                    collectedSpecialFrog = false;
+                }
+                // BONUS FOR FLY
+                if (collectedFly)
+                {
+                    playerScore.AddScore(200);
+                    collectedFly = false;
+                }
+
                 //below is implementation of reaching normal  lillypad
+               
                 playerScore.AddScore(100);
 
-                Time.timeScale = 0f;
+
+                // Reset the lily pad flag after short delay so we can score again next time
+                Invoke(nameof(AllowLilyPadTrigger), 2f);
+
+                if (transform.parent != null)
+                    transform.parent.SetParent(null);
+
+                ResetPosition();
+                //Time.timeScale = 0f;
             }
 
-            if (other.GetComponent<FlyBehavior>() != null)
-            {
-                //Should implement, I think the fly object is not reachable since the player cant go on top of the lillypad and stops right before
-                PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
-                playerScore.AddScore(200);
-                Debug.Log("Got Fly");
-                Destroy(other.gameObject);
-            }
 
 
-            else if (other.GetComponent<IsPylon>() != null) // THIS WAS ADDED
+            // if the frog touches the pylon it will return the frog to its original location
+            else if (other.GetComponent<IsPylon>() != null) 
             {
-                Debug.Log("Blocked by pylon!");
                 isJumping = false;
 
                 // Bounce frog back to last safe position
-                transform.position = lastSafePosition; // THIS WAS ADDED
-                Debug.Log("Bounced back to: " + lastSafePosition); // THIS WAS ADDED
+                transform.position = lastSafePosition; 
             }
 
         }
@@ -199,7 +259,15 @@ public class PlayerMovement : MonoBehaviour
 
     void ResetPosition()
     {
+        Debug.Log("Reset position");
+        if (transform.parent != null)
+            transform.parent.SetParent(null); // Always unparent before moving
         transform.position = new Vector3(0, 1, -97.3f);
+    }
+
+    void AllowLilyPadTrigger()
+    {
+        reachedLilyPad = false;
     }
 }
 

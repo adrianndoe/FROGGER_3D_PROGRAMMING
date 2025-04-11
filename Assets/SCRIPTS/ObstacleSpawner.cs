@@ -41,7 +41,7 @@ public class ObsticalSpawner : MonoBehaviour
         }
 
         // assign a unique speed for this spawner between 20 and 40
-        moveSpeed = Random.Range(20f, 40f);
+        moveSpeed = Random.Range(10f, 20f);
         StartCoroutine(SpawnWhenClear()); // start spawning loop
     }
 
@@ -106,11 +106,8 @@ public class ObsticalSpawner : MonoBehaviour
         // adjusts the turtle prefab to face the right direction when spawning
         if (movingObject.GetComponent<IsTurtle>() != null)
         {
-            Debug.Log($"[TURTLE BEFORE ROTATE] Rotation: {movingObject.transform.rotation.eulerAngles}");
-            movingObject.transform.Rotate(0, 90f, 0);  // Your preferred method
-            //movingObject.transform.rotation = Quaternion.Euler(0, 90, 0); // Force consistent Y rotation
 
-            Debug.Log($"[TURTLE AFTER ROTATE] Rotation: {movingObject.transform.rotation.eulerAngles}");
+            movingObject.transform.Rotate(0, 90f, 0);  // Your preferred method
         }
 
 
@@ -135,13 +132,6 @@ public class ObsticalSpawner : MonoBehaviour
         mover.speed = moveSpeed;              // grab speed from spawner
         mover.direction = direction;          // pass direction based on spawn
         mover.destroyDistance = destroyDistance;
-
-       /* TurtleSubmerge turtle = movingObject.GetComponent<TurtleSubmerge>();
-        if (turtle != null)
-        {
-            turtle.Initialize(moveSpeed, direction);
-        }
-*/
 
         return movingObject;
     }
