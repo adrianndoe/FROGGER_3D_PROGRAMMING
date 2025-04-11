@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private const float JUMP_DURATION = 1.35f; // demo 1f  // Time to reach the peak
     private const float JUMP_OFFSET = 8.5f; // demo 15.2f;
     private Vector3 lastSafePosition; //ADDED THIS
+    private Vector3 parentMovement = new Vector3(0,0,0);
 
     private bool activeCollision;
     private Vector3 platformVector;
@@ -35,11 +36,6 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // determine the speed of the object the player is standing on, if on an object
-        Vector3 parentMovement = new Vector3(0, 0, 0);
-        if (transform.parent.parent != null)
-            parentMovement = transform.parent.parent.GetComponent<ObstacleMover>().speed * transform.parent.parent.GetComponent<ObstacleMover>().direction * Time.deltaTime;
-
         if (Physics.Raycast(transform.position + Vector3.up * 0.1f - new Vector3(0, transform.localScale.y / 2, 0), // Start slightly above the base
                         Vector3.down,
                         out RaycastHit hit,
@@ -60,6 +56,12 @@ public class PlayerMovement : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.DownArrow)) { jumpVector = new Vector3(0, 1, -1); }
                     if (Input.GetKeyDown(KeyCode.LeftArrow)) { jumpVector = new Vector3(-0.5f, 1f, 0); }
                     if (Input.GetKeyDown(KeyCode.RightArrow)) { jumpVector = new Vector3(0.5f, 1f, 0); }
+
+                    // determine the speed of the object the player is standing on, if on an object
+                    parentMovement = new Vector3(0, 0, 0);
+                    if (transform.parent.parent != null && jumpVector.x != 0)
+                        parentMovement = 1.0f * transform.parent.parent.GetComponent<ObstacleMover>().speed * transform.parent.parent.GetComponent<ObstacleMover>().direction;
+
                 }
             }
             else if (hit.collider.GetComponent<IsLilyPad>() != null)
@@ -71,16 +73,18 @@ public class PlayerMovement : MonoBehaviour
         }
         if (isJumping)
         {
+            Debug.Log("Parent velocity:" + parentMovement);
             if (transform.parent.parent != null) transform.parent.parent = null;   // if frogger is attached to an island (turtle, log, aligator), detatch as it jumps
             jumpTimer += Time.deltaTime * 3; // speed up jumping time by a factor of 3
             float yOffset = jumpVelocity * jumpTimer - (0.5f * Physics.gravity.magnitude * jumpTimer * jumpTimer); // calculate y value per update above starting y position
             float forwardOffset = JUMP_OFFSET * jumpTimer; // calculate how far forward the frog will be
 
-            Vector3 newPosition = startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset) + parentMovement; // map the new position
+            Vector3 newPosition = startPosition + new Vector3(jumpVector.x * forwardOffset,
+                yOffset, jumpVector.z * forwardOffset) + parentMovement * jumpTimer / 3;
 
             if (newPosition.z < -97.3) newPosition.z = -97.3f; // don't allow jumping off the bottom edge of the screen
-            if (newPosition.x >  92.5) newPosition.x =  92.5f; // don't allow jumping off the right  edge of the screen
-            if (newPosition.x < -92.5) newPosition.x = -92.5f; // don't allow jumping off the left   edge of the screen
+            if (newPosition.x >   136) newPosition.x =  136;   // don't allow jumping off the right  edge of the screen
+            if (newPosition.x <  -136) newPosition.x = -136;   // don't allow jumping off the left   edge of the screen
 
             if (activeCollision == false)
                 transform.position = newPosition; // startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset);
@@ -100,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 Debug.Log("Collision with turtles");
                 float newYCoord = other.transform.position.y + this.transform.localScale.y / 2 + 0.1f; // find the top of the landing pad with the collider in it for the floating object
+             
                 Vector3 newPosition = new Vector3(transform.position.x, newYCoord, other.transform.position.z);
                 
                 Debug.Log("COLLISION SPEED: " + other.transform.InverseTransformDirection(new Vector3(0, 0, 0)));
