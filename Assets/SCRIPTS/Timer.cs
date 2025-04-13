@@ -7,6 +7,11 @@ public class Timer : MonoBehaviour
     public float currentTime = 45f;
     private GameObject player;  // Reference to the frog GameObject which will be found later
 
+    public GameObject resultsPanel; //to display score after timer is up
+    public TextMeshProUGUI finalScoreText; //text displaying score
+
+    private PlayerScore playerScore;
+
     void Start()
     {
         // Find the PlayerMovement script since it references the player
@@ -39,6 +44,22 @@ public class Timer : MonoBehaviour
             else
             {
                 Debug.Log("Frog GameObject not set!");
+            }
+
+            ShowResults();
+            Time.timeScale = 0f;
+        }
+
+    }
+
+    void ShowResults()
+    {
+        if (resultsPanel != null)
+        {
+            resultsPanel.SetActive(true);
+            if(finalScoreText != null && playerScore != null)
+            {
+                finalScoreText.text = "Final Score: " + playerScore.GetScore();
             }
         }
     }

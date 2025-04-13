@@ -5,6 +5,7 @@ using TMPro;
 public class PlayerScore : MonoBehaviour
 {
     public TextMeshProUGUI scoreCountText;
+    public TextMeshProUGUI resultCountText;
     private int score;
   
 
@@ -24,7 +25,19 @@ public class PlayerScore : MonoBehaviour
         if(scoreCountText != null)
         {
             scoreCountText.text = "Score: " + score;
+
+        }
+
+        if(resultCountText != null)
+        {
+            resultCountText.text = "Final Score: " + score;
         }
         
     }
+
+    public int GetScore()
+{
+    return score;
+}
+
 }
