@@ -22,21 +22,21 @@ public class PlayerMovement : MonoBehaviour
     private const float JUMP_TIME_FACTOR = 4f;   // adjust this to make jumps go quicker
 
     private bool activeCollision;
-    private Vector3 platformVector;
 
     private bool ignoreCollisions = false; // used to disable collisions when attaching frog to a moving platform
     
     //Added for collecting fly and special frog
     [HideInInspector] public bool collectedSpecialFrog = false; // THIS WAS ADDED (Used to recognize if frog gets lady frog) **Points**
     [HideInInspector] public bool collectedFly = false; // THIS WAS ADDED (Used to recognize if frog got a fly before touching lillypad) **Points**
-    private bool reachedLilyPad = false; // Prevent multiple triggers (not fully implemented yet)
     [SerializeField] private GameObject frogPrefab;
     [SerializeField] private ParticleSystem particles;
+    private GameObject gameManager;
 
     private GameObject timer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManager = GameObject.Find("GAMEMANAGER");
         timer = GameObject.Find("TimerText"); // FindAnyObjectByType<Timer>(); //get time for bonus points and death
         _rb = GetComponent<Rigidbody>();
         jumpVelocity = (2 * JUMP_HEIGHT) / JUMP_DURATION; // Physics equation: v = (2h) / t
@@ -94,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
                                                                                   // done at the start of Update now                Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
                     int timeScore = (int)(timer.GetComponent<Timer>().currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
                     playerScore.AddScore(timeScore);
+                    gameManager.GetComponent<GameManager>().lilyPadCollected++;
                     Instantiate(frogPrefab, hit.collider.transform.position, Quaternion.identity);
                     Instantiate(particles, hit.collider.transform.position, Quaternion.identity);
                     // BONUS FOR SPECIAL FROG
@@ -105,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
                     // BONUS FOR FLY
                     if (collectedFly)
                     {
-                        SoundManager.PlaySound(SoundTypeEffects.COLLECT_FLY);
+                        
                         playerScore.AddScore(200);
                         collectedFly = false;
                     }
@@ -162,6 +163,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
+        // BONUS FOR SPECIAL FROG
+        if (collectedSpecialFrog)
+        {
+            playerScore.AddScore(200);
+            collectedSpecialFrog = false;
+            SoundManager.PlaySound(SoundTypeEffects.COLLECT_BONUS_FROG);    
+            Debug.Log("LINE 205");
+        }
+        // BONUS FOR FLY
+        if (collectedFly)
+        {
+            SoundManager.PlaySound(SoundTypeEffects.COLLECT_FLY);
+            playerScore.AddScore(200);
+            collectedFly = false;
+        }
         if (!ignoreCollisions)
         {
             Debug.Log("Triggered with: " + other.name);
@@ -195,20 +212,7 @@ public class PlayerMovement : MonoBehaviour
                 Death("aligator");
             }
 
-            PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
-
-            // BONUS FOR SPECIAL FROG
-            if (collectedSpecialFrog)
-            {
-                playerScore.AddScore(200);
-                collectedSpecialFrog = false;
-            }
-            // BONUS FOR FLY
-            if (collectedFly)
-            {
-                playerScore.AddScore(200);
-                collectedFly = false;
-            }
+       
             /*
             if (other.GetComponent<IsLilyPad>() != null)
              {
@@ -263,18 +267,18 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void LandSafeInWater(Collider _other)
-    {
-        if (_other != null)
-        {
-            Debug.Log("Landed on: " + _other.name);
-            float newYCoord = _other.transform.position.y + this.transform.localScale.y / 2 + 0.1f; // find the top of the landing pad with the collider in it for the floating object
-            Debug.Log(newYCoord);
-            this.transform.position = new Vector3(this.transform.position.x, newYCoord, this.transform.position.z); // update position to on top of floating object
-            isJumping = false;
-            transform.parent.parent = _other.transform;  // stand on the moving log - when you jump off, set parent to null
-        }
-    }
+    //void LandSafeInWater(Collider _other)
+    //{
+    //    if (_other != null)
+    //    {
+    //        Debug.Log("Landed on: " + _other.name);
+    //        float newYCoord = _other.transform.position.y + this.transform.localScale.y / 2 + 0.1f; // find the top of the landing pad with the collider in it for the floating object
+    //        Debug.Log(newYCoord);
+    //        this.transform.position = new Vector3(this.transform.position.x, newYCoord, this.transform.position.z); // update position to on top of floating object
+    //        isJumping = false;
+    //        transform.parent.parent = _other.transform;  // stand on the moving log - when you jump off, set parent to null
+    //    }
+    //}
     
 
     void Death(string _cause)
@@ -311,9 +315,9 @@ public class PlayerMovement : MonoBehaviour
         transform.position = new Vector3(0, 1, -97.3f);
     }
 
-    void AllowLilyPadTrigger()
-    {
-        reachedLilyPad = false;
-    }
+    //void AllowLilyPadTrigger()
+    //{
+    //    reachedLilyPad = false;
+    //}
 }
 

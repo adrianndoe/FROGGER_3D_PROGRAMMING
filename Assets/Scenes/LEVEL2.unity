@@ -3996,7 +3996,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1948302107}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: LoadMainMenu
         m_Mode: 1
@@ -6937,7 +6937,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1948302107}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: LoadMainMenu
         m_Mode: 1
@@ -9122,9 +9122,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948302105}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4c174e1bbd6ab64c886c81329894f66, type: 3}
+  m_Script: {fileID: 11500000, guid: fd028d234e2943445afa8fa8f3b6144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lilyPadCollected: 0
 --- !u!1 &1957882650
 GameObject:
   m_ObjectHideFlags: 0
