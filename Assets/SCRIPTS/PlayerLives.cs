@@ -41,6 +41,7 @@ public class PlayerLives : MonoBehaviour
 
     void GameOver()
     {
+        SoundManager.PlaySound(SoundTypeEffects.GAME_OVER);
         isGameOver = true;
         gameOverPanel.SetActive(true);
         Time.timeScale = 0f;

@@ -42,6 +42,7 @@ public class SpecialFrog : MonoBehaviour
         var movement = other.GetComponent<PlayerMovement>();
         if (movement != null)
         {
+            SoundManager.PlaySound(SoundTypeEffects.COLLECT_BONUS_FROG);
             movement.collectedSpecialFrog = true;  //  set the flag
 
             var scoreSystem = FindAnyObjectByType<PlayerScore>();

@@ -45,6 +45,7 @@ public class Timer : MonoBehaviour
             currentTime = 0;
             if (player != null)
             {
+                SoundManager.PlaySound(SoundTypeEffects.OUT_OF_TIME);
                 Destroy(player);
                 Time.timeScale = 0f;
             }
@@ -53,6 +54,7 @@ public class Timer : MonoBehaviour
                 Debug.Log("Frog GameObject not set!");
             }
 
+ //           SoundManager.PlaySound(SoundTypeEffects.GAME_OVER);
             ShowResults();
             Time.timeScale = 0f;
         }
