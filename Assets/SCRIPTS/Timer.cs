@@ -26,6 +26,13 @@ public class Timer : MonoBehaviour
         {
             Debug.Log("PlayerMovement component not found in the scene.");
         }
+
+        //for player end score
+        playerScore = FindAnyObjectByType<PlayerScore>();
+        if(playerScore == null)
+        {
+            Debug.Log("Player Score not found");
+        }
     }
 
     void Update()

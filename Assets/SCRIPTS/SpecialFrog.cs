@@ -43,6 +43,12 @@ public class SpecialFrog : MonoBehaviour
         if (movement != null)
         {
             movement.collectedSpecialFrog = true;  //  set the flag
+
+            var scoreSystem = FindAnyObjectByType<PlayerScore>();
+            if(scoreSystem != null)
+            {
+                scoreSystem.AddScore(500);
+            }
             Destroy(gameObject);
         }
     }
