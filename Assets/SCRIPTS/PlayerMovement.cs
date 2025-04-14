@@ -28,8 +28,8 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool collectedSpecialFrog = false; // THIS WAS ADDED (Used to recognize if frog gets lady frog) **Points**
     [HideInInspector] public bool collectedFly = false; // THIS WAS ADDED (Used to recognize if frog got a fly before touching lillypad) **Points**
     private bool reachedLilyPad = false; // Prevent multiple triggers (not fully implemented yet)
-
-
+    [SerializeField] private GameObject frogPrefab;
+    [SerializeField] private ParticleSystem particles;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -79,8 +79,8 @@ public class PlayerMovement : MonoBehaviour
                 Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
                 int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
                 playerScore.AddScore(timeScore);
-
-
+                Instantiate(frogPrefab, hit.collider.transform.position, Quaternion.identity);
+                Instantiate(particles, hit.collider.transform.position, Quaternion.identity);
                 // BONUS FOR SPECIAL FROG
                 if (collectedSpecialFrog)
                 {
@@ -165,7 +165,7 @@ public class PlayerMovement : MonoBehaviour
             else if (other.GetComponent<IsAligatorOpenMouth>() != null)
                 Death("aligator");
 
-            if (other.GetComponent<IsLilyPad>() != null)
+           /* if (other.GetComponent<IsLilyPad>() != null)
             {
                 isJumping = false;
                 Debug.Log("Frog landed on lily pad");
@@ -174,8 +174,7 @@ public class PlayerMovement : MonoBehaviour
                 Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
                 int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
                 playerScore.AddScore(timeScore);
-
-
+                
                 // BONUS FOR SPECIAL FROG
                 if (collectedSpecialFrog)
                 {
@@ -202,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
 
                 ResetPosition();
                 //Time.timeScale = 0f;
-            }
+            }*/
 
 
 
