@@ -4,7 +4,8 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     public TextMeshProUGUI timerCount;
-    public float currentTime = 45f;
+    private const float TIME_PER_ATTEMPT = 60f;
+    public float currentTime = TIME_PER_ATTEMPT;
     private GameObject player;  // Reference to the frog GameObject which will be found later
 
     public GameObject resultsPanel; //to display score after timer is up
@@ -26,7 +27,7 @@ public class Timer : MonoBehaviour
         {
             Debug.Log("PlayerMovement component not found in the scene.");
         }
-
+        currentTime = TIME_PER_ATTEMPT;
         //for player end score
         playerScore = FindAnyObjectByType<PlayerScore>();
         if(playerScore == null)
@@ -45,18 +46,19 @@ public class Timer : MonoBehaviour
             currentTime = 0;
             if (player != null)
             {
-                SoundManager.PlaySound(SoundTypeEffects.OUT_OF_TIME);
-                Destroy(player);
-                Time.timeScale = 0f;
+                // done in PlayerMovement now               SoundManager.PlaySound(SoundTypeEffects.OUT_OF_TIME);
+                // done in PlayerMovement now                Destroy(player);
+                // done in PlayerMovement now                 Time.timeScale = 0f;
             }
             else
             {
                 Debug.Log("Frog GameObject not set!");
             }
 
- //           SoundManager.PlaySound(SoundTypeEffects.GAME_OVER);
-            ShowResults();
-            Time.timeScale = 0f;
+
+            //           SoundManager.PlaySound(SoundTypeEffects.GAME_OVER);
+            // done in PlayerMovement now           ShowResults();
+            // done in PlayerMovement now           Time.timeScale = 0f;
         }
 
     }
@@ -71,5 +73,10 @@ public class Timer : MonoBehaviour
                 finalScoreText.text = "Final Score: " + playerScore.GetScore();
             }
         }
+    }
+
+    public void ResetTimer()
+    {
+        currentTime = TIME_PER_ATTEMPT;
     }
 }

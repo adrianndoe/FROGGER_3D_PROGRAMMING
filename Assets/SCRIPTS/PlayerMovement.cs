@@ -25,16 +25,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 platformVector;
 
     private bool ignoreCollisions = false; // used to disable collisions when attaching frog to a moving platform
-
+    
     //Added for collecting fly and special frog
     [HideInInspector] public bool collectedSpecialFrog = false; // THIS WAS ADDED (Used to recognize if frog gets lady frog) **Points**
     [HideInInspector] public bool collectedFly = false; // THIS WAS ADDED (Used to recognize if frog got a fly before touching lillypad) **Points**
     private bool reachedLilyPad = false; // Prevent multiple triggers (not fully implemented yet)
     [SerializeField] private GameObject frogPrefab;
     [SerializeField] private ParticleSystem particles;
+
+    private GameObject timer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        timer = GameObject.Find("TimerText"); // FindAnyObjectByType<Timer>(); //get time for bonus points and death
         _rb = GetComponent<Rigidbody>();
         jumpVelocity = (2 * JUMP_HEIGHT) / JUMP_DURATION; // Physics equation: v = (2h) / t
         activeCollision = false;
@@ -44,107 +47,116 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position + Vector3.up * 0.1f - new Vector3(0, transform.localScale.y / 2, 0), // Start slightly above the base
-                        Vector3.down,
-                        out RaycastHit hit,
-                        0.2f
-                        ) || (transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()))
+        Debug.Log(timer.GetComponent<Timer>().currentTime);
+        if (timer.GetComponent<Timer>().currentTime <= 0)
         {
-            if ((transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()) || hit.collider.GetComponent<IsLand>()) // Check if it has the script
+            SoundManager.PlaySound(SoundTypeEffects.OUT_OF_TIME);
+            Death("Timer can out");
+        }
+        else
+        {
+            if (Physics.Raycast(transform.position + Vector3.up * 0.1f - new Vector3(0, transform.localScale.y / 2, 0), // Start slightly above the base
+                            Vector3.down,
+                            out RaycastHit hit,
+                            0.2f
+                            ) || (transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()))
             {
+                if ((transform.parent.parent != null && transform.parent.parent.GetComponent<IsSafeWater>()) || hit.collider.GetComponent<IsLand>()) // Check if it has the script
+                {
                     Debug.Log("On something safe!");
-                isJumping = false;
-                lastSafePosition = transform.position;
-                if (Input.anyKeyDown && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)))
+                    isJumping = false;
+                    lastSafePosition = transform.position;
+                    if (Input.anyKeyDown && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)))
+                    {
+                        SoundManager.PlaySound(SoundTypeEffects.JUMP);
+
+                        isJumping = true;
+                        jumpTimer = 0f;
+                        startPosition = transform.position;
+                        if (Input.GetKeyDown(KeyCode.UpArrow)) { jumpVector = new Vector3(0, 1, 1); }
+                        if (Input.GetKeyDown(KeyCode.DownArrow)) { jumpVector = new Vector3(0, 1, -1); }
+                        if (Input.GetKeyDown(KeyCode.LeftArrow)) { jumpVector = new Vector3(-0.75f, 1f, 0); }
+                        if (Input.GetKeyDown(KeyCode.RightArrow)) { jumpVector = new Vector3(0.75f, 1f, 0); }
+
+                        // determine the speed of the object the player is standing on, if on an object
+                        parentMovement = new Vector3(0, 0, 0);
+                        if (transform.parent.parent != null && jumpVector.x != 0)
+                            parentMovement = 1.0f * transform.parent.parent.GetComponent<ObstacleMover>().speed * transform.parent.parent.GetComponent<ObstacleMover>().direction;
+
+                    }
+                }
+                else if (hit.collider.GetComponent<IsLilyPad>() != null)
                 {
-                    SoundManager.PlaySound(SoundTypeEffects.JUMP);
+                    isJumping = false;
+                    Debug.Log("Landed safe");
 
-                    isJumping = true;
-                    jumpTimer = 0f;
-                    startPosition = transform.position;
-                    if (Input.GetKeyDown(KeyCode.UpArrow)) { jumpVector = new Vector3(0, 1, 1); }
-                    if (Input.GetKeyDown(KeyCode.DownArrow)) { jumpVector = new Vector3(0, 1, -1); }
-                    if (Input.GetKeyDown(KeyCode.LeftArrow)) { jumpVector = new Vector3(-0.5f, 1f, 0); }
-                    if (Input.GetKeyDown(KeyCode.RightArrow)) { jumpVector = new Vector3(0.5f, 1f, 0); }
+                    PlayerScore playerScore = FindAnyObjectByType<PlayerScore>(); //get access to player score
+                                                                                  // done at the start of Update now                Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
+                    int timeScore = (int)(timer.GetComponent<Timer>().currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
+                    playerScore.AddScore(timeScore);
+                    Instantiate(frogPrefab, hit.collider.transform.position, Quaternion.identity);
+                    Instantiate(particles, hit.collider.transform.position, Quaternion.identity);
+                    // BONUS FOR SPECIAL FROG
+                    if (collectedSpecialFrog)
+                    {
+                        playerScore.AddScore(200);
+                        collectedSpecialFrog = false;
+                    }
+                    // BONUS FOR FLY
+                    if (collectedFly)
+                    {
+                        SoundManager.PlaySound(SoundTypeEffects.COLLECT_FLY);
+                        playerScore.AddScore(200);
+                        collectedFly = false;
+                    }
 
-                    // determine the speed of the object the player is standing on, if on an object
-                    parentMovement = new Vector3(0, 0, 0);
-                    if (transform.parent.parent != null && jumpVector.x != 0)
-                        parentMovement = 1.0f * transform.parent.parent.GetComponent<ObstacleMover>().speed * transform.parent.parent.GetComponent<ObstacleMover>().direction;
+                    //below is implementation of reaching normal  lillypad
 
+                    playerScore.AddScore(100);
+                    SoundManager.PlaySound(SoundTypeEffects.LILY_PAD);
+
+
+                    // Reset the lily pad flag after short delay so we can score again next time
+                    //Invoke(nameof(AllowLilyPadTrigger), 0.2f);
+
+                    if (transform.parent != null)
+                        transform.parent.SetParent(null);
+
+                    ResetPosition();
+                    timer.GetComponent<Timer>().ResetTimer();
+
+
+
+                    // BRUNO: I'm sure you have a reason but i couldn't figure it out this
+                    // it removes a life im assuming you haven't implemented whats suppose to happen when it hits a lillypad
+                    // as thats the only instance of Death("not dead") i would assume would be called
+                    //Death("not dead");
                 }
             }
-            else if (hit.collider.GetComponent<IsLilyPad>() != null)
+            if (isJumping)
             {
-                isJumping = false;
-                Debug.Log("Landed safe");
+                Debug.Log("Parent velocity:" + parentMovement);
+                if (transform.parent.parent != null) transform.parent.parent = null;   // if frogger is attached to an island (turtle, log, aligator), detatch as it jumps
+                jumpTimer += Time.deltaTime * JUMP_TIME_FACTOR; // speed up jumping time by a factor of 3
+                float yOffset = jumpVelocity * jumpTimer - (0.5f * Physics.gravity.magnitude * jumpTimer * jumpTimer); // calculate y value per update above starting y position
+                float forwardOffset = JUMP_OFFSET * jumpTimer; // calculate how far forward the frog will be
 
-                PlayerScore playerScore = FindAnyObjectByType<PlayerScore>(); //get access to player score
-                Timer timer = FindAnyObjectByType<Timer>(); //get time for bonus points
-                int timeScore = (int)(timer.currentTime / 0.5f) * 10; //get additional 10 points for every .5 seconds left on timer
-                playerScore.AddScore(timeScore);
-                Instantiate(frogPrefab, hit.collider.transform.position, Quaternion.identity);
-                Instantiate(particles, hit.collider.transform.position, Quaternion.identity);
-                // BONUS FOR SPECIAL FROG
-                if (collectedSpecialFrog)
-                {
-                    playerScore.AddScore(200);
-                    collectedSpecialFrog = false;
-                }
-                // BONUS FOR FLY
-                if (collectedFly)
-                {
-                    SoundManager.PlaySound(SoundTypeEffects.COLLECT_FLY);
-                    playerScore.AddScore(200);
-                    collectedFly = false;
-                }
+                Vector3 newPosition = startPosition + new Vector3(jumpVector.x * forwardOffset,
+                    yOffset, jumpVector.z * forwardOffset) + parentMovement * jumpTimer / JUMP_TIME_FACTOR;
 
-                //below is implementation of reaching normal  lillypad
+                if (newPosition.z < -97.3) newPosition.z = -97.3f; // don't allow jumping off the bottom edge of the screen
+                if (newPosition.x > 136) newPosition.x = 136;   // don't allow jumping off the right  edge of the screen
+                if (newPosition.x < -136) newPosition.x = -136;   // don't allow jumping off the left   edge of the screen
 
-                playerScore.AddScore(100);
-                SoundManager.PlaySound(SoundTypeEffects.LILY_PAD);
-
-
-                // Reset the lily pad flag after short delay so we can score again next time
-                //Invoke(nameof(AllowLilyPadTrigger), 0.2f);
-
-                if (transform.parent != null)
-                    transform.parent.SetParent(null);
-
-                ResetPosition();
-
-
-
-
-                // BRUNO: I'm sure you have a reason but i couldn't figure it out this
-                // it removes a life im assuming you haven't implemented whats suppose to happen when it hits a lillypad
-                // as thats the only instance of Death("not dead") i would assume would be called
-                //Death("not dead");
+                if (activeCollision == false)
+                    transform.position = newPosition; // startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset);
+                activeCollision = false;
             }
-        }
-        if (isJumping)
-        {
-            Debug.Log("Parent velocity:" + parentMovement);
-            if (transform.parent.parent != null) transform.parent.parent = null;   // if frogger is attached to an island (turtle, log, aligator), detatch as it jumps
-            jumpTimer += Time.deltaTime * JUMP_TIME_FACTOR; // speed up jumping time by a factor of 3
-            float yOffset = jumpVelocity * jumpTimer - (0.5f * Physics.gravity.magnitude * jumpTimer * jumpTimer); // calculate y value per update above starting y position
-            float forwardOffset = JUMP_OFFSET * jumpTimer; // calculate how far forward the frog will be
-
-            Vector3 newPosition = startPosition + new Vector3(jumpVector.x * forwardOffset,
-                yOffset, jumpVector.z * forwardOffset) + parentMovement * jumpTimer / JUMP_TIME_FACTOR;
-
-            if (newPosition.z < -97.3) newPosition.z = -97.3f; // don't allow jumping off the bottom edge of the screen
-            if (newPosition.x >   136) newPosition.x =  136;   // don't allow jumping off the right  edge of the screen
-            if (newPosition.x <  -136) newPosition.x = -136;   // don't allow jumping off the left   edge of the screen
-
-            if (activeCollision == false)
-                transform.position = newPosition; // startPosition + new Vector3(jumpVector.x * forwardOffset, yOffset, jumpVector.z * forwardOffset);
-            activeCollision = false;
-        }
-        if (transform.position.x < -97 || transform.position.x > 97)
-        {
-            SoundManager.PlaySound(SoundTypeEffects.FALL_IN_WATER);
-            Death("driven out of bounds");
+            if (transform.position.x < -97 || transform.position.x > 97)
+            {
+                SoundManager.PlaySound(SoundTypeEffects.FALL_IN_WATER);
+                Death("driven out of bounds");
+            }
         }
     }
 
@@ -183,7 +195,22 @@ public class PlayerMovement : MonoBehaviour
                 Death("aligator");
             }
 
-            /* if (other.GetComponent<IsLilyPad>() != null)
+            PlayerScore playerScore = FindAnyObjectByType<PlayerScore>();
+
+            // BONUS FOR SPECIAL FROG
+            if (collectedSpecialFrog)
+            {
+                playerScore.AddScore(200);
+                collectedSpecialFrog = false;
+            }
+            // BONUS FOR FLY
+            if (collectedFly)
+            {
+                playerScore.AddScore(200);
+                collectedFly = false;
+            }
+            /*
+            if (other.GetComponent<IsLilyPad>() != null)
              {
                  isJumping = false;
                  Debug.Log("Frog landed on lily pad");
@@ -265,6 +292,8 @@ public class PlayerMovement : MonoBehaviour
             if(lives.currentLives > 0)
             {
                 ResetPosition();
+                timer.GetComponent<Timer>().ResetTimer();
+                
             }
             else
             {
