@@ -6,7 +6,6 @@ public class SpecialFrog : MonoBehaviour
     public float despawnTime = 2f; // Time before disappearing if not collected
     private bool collected = false;
     public System.Action onFrogDestroyed;
-
     void Start()
     {
         StartCoroutine(DespawnAfterDelay());

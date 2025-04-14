@@ -40,8 +40,8 @@ public class ObsticalSpawner : MonoBehaviour
             moveDirection = Vector3.left;        // Cars move to the left
         }
 
-        // assign a unique speed for this spawner between 20 and 40
-        moveSpeed = Random.Range(10f, 20f);
+        // assign a unique speed for this spawner between 15 and 25
+        moveSpeed = Random.Range(15f, 25f);
         StartCoroutine(SpawnWhenClear()); // start spawning loop
     }
 

@@ -1,108 +1,3 @@
-/*using UnityEngine;
-using System.Collections;
-
-public class TurtleSubmerge : MonoBehaviour
-{
-    private float originalY;
-    private Quaternion originalRotation; // Save the rotation
-    private bool isSubmerging = false;
-
-    [Header("Submerge Settings")]
-    public float submergeDepth = 1f;
-    public float submergeDownTime = 1f;
-    public float stayUnderwaterTime = 2f;
-    public float submergeUpTime = 1f;
-
-
-    private Renderer[] renderers;             // all renderers in object + children
-    private Color[] originalColors;           // original colors for reset
-
-    void Start()
-    {
-        originalY = transform.position.y;
-        originalRotation = transform.rotation; // Save original rotation
-
-        // Cache renderers and original colors
-        renderers = GetComponentsInChildren<Renderer>();
-        originalColors = new Color[renderers.Length];
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            originalColors[i] = renderers[i].material.color;
-        }
-
-        StartCoroutine(SubmergeCycle());
-    }
-
-    IEnumerator SubmergeCycle()
-    {
-        while (true)
-        {
-            float waitBeforeSubmerge = Random.Range(3f, 6f);
-
-            // Wait up until 1 second before submerge
-            yield return new WaitForSeconds(waitBeforeSubmerge - 1f);
-
-            // Change to red 1 second before submerging
-            SetColor(Color.red);
-
-            yield return new WaitForSeconds(1f);
-
-            isSubmerging = true;
-
-            // Go down
-            yield return MoveY(originalY, originalY - submergeDepth, submergeDownTime);
-
-            // Stay under
-            yield return new WaitForSeconds(stayUnderwaterTime);
-
-            // Go back up
-            yield return MoveY(originalY - submergeDepth, originalY, submergeUpTime);
-
-            // Reset position + rotation (forcefully)
-            transform.position = new Vector3(transform.position.x, originalY, transform.position.z);
-            transform.rotation = originalRotation;
-
-            // Restore original color
-            ResetColor();
-
-            isSubmerging = false;
-        }
-    }
-
-    IEnumerator MoveY(float startY, float endY, float duration)
-    {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float newY = Mathf.Lerp(startY, endY, elapsed / duration);
-
-            Vector3 pos = transform.position;
-            transform.position = new Vector3(pos.x, newY, pos.z);
-
-            yield return null;
-        }
-
-        transform.position = new Vector3(transform.position.x, endY, transform.position.z);
-    }
-
-    void SetColor(Color color)
-    {
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            renderers[i].material.color = color;
-        }
-    }
-
-    void ResetColor()
-    {
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            renderers[i].material.color = originalColors[i];
-        }
-    }
-}
-*/
 using UnityEngine;
 
 public class TurtleSubmerge : MonoBehaviour
@@ -118,6 +13,9 @@ public class TurtleSubmerge : MonoBehaviour
     public float stayUnderwaterTime = 2f;
     public float submergeUpTime = 1f;
     private float waitTime;  // Randomized wait time before submerge
+    [Header("Submerge Control")]
+    public bool canSubmerge = true; // gets randomly set when spawned
+    [Range(0f, 1f)] public float submergeChance = 0.5f; // 0.5 = 50% chance
 
     private enum SubmergeState
     {
@@ -136,6 +34,16 @@ public class TurtleSubmerge : MonoBehaviour
 
     void Start()
     {
+        // Randomly decide if this turtle will submerge
+        canSubmerge = Random.value < submergeChance;
+
+        if (!canSubmerge)
+        {
+            // Disable this script if it's not allowed to submerge
+            enabled = false;
+            return;
+        }
+
         originalY = transform.position.y;
         originalRotation = transform.rotation;
 
@@ -148,6 +56,7 @@ public class TurtleSubmerge : MonoBehaviour
 
         SetNewWaitTime();
     }
+
 
     void Update()
     {
